@@ -1,4 +1,4 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
+[@concept-design-overview](concept-design-overview.md)
 
 [@concept-specifications](../../background/concept-specifications.md)
 

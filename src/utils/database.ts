@@ -1,8 +1,20 @@
 // This import loads the `.env` file as environment variables
-import "jsr:@std/dotenv/load";
-import { Db, MongoClient } from "npm:mongodb";
+import "@std/dotenv/load";
+import { Db, MongoClient } from "mongodb";
 import { ID } from "@utils/types.ts";
-import { generate } from "jsr:@std/uuid/unstable-v7";
+// Using built-in crypto.randomUUID() instead of external UUID library
+
+/**
+ * Returns whether tests should clean the test database before running.
+ * Controlled via the `TEST_DB_CLEAN` env var. Defaults to true.
+ * Falsy values: "0", "false", "no" (case-insensitive)
+ */
+export function shouldCleanTestDb(): boolean {
+  const raw = Deno.env.get("TEST_DB_CLEAN");
+  if (raw === undefined) return true;
+  const normalized = raw.trim().toLowerCase();
+  return !["0", "false", "no"].includes(normalized);
+}
 
 async function initMongoClient() {
   const DB_CONN = Deno.env.get("MONGODB_URL");
@@ -59,7 +71,18 @@ export async function testDb() {
   const [client, DB_NAME] = await init();
   const test_DB_NAME = `test-${DB_NAME}`;
   const test_Db = client.db(test_DB_NAME);
-  await dropAllCollections(test_Db);
+  try {
+    if (shouldCleanTestDb()) {
+      await dropAllCollections(test_Db);
+    }
+  } catch (e) {
+    try {
+      await client.close();
+    } catch {
+      // ignore secondary close errors
+    }
+    throw e;
+  }
   return [test_Db, client] as [Db, MongoClient];
 }
 
@@ -68,5 +91,5 @@ export async function testDb() {
  * @returns {ID} UUID v7 generic ID.
  */
 export function freshID() {
-  return generate() as ID;
+  return crypto.randomUUID() as ID;
 }
