@@ -1,3 +1,10 @@
+Focused on testing user login and registration
+Tested:
+- Registration
+- Login
+- Existing Email error
+- Incorrect password login error
+- Nonexistent email error
 ## Complete Console Output
 
 ```

@@ -1,3 +1,10 @@
+1 test case broken up into 6 steps-- considered each step a test case
+Tested:
+- Creation of media album, uploading to the album, and fetching it from db
+- Checked for edge cases such as:
+	- preventing duplicate albums
+	- verifying that only the owner can upload
+	- verifying the queries
 ## Complete Console Output
 
 ```

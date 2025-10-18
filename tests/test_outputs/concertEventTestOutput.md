@@ -1,3 +1,8 @@
+Tested the creation of a concert event (8 steps each step considered a test case)
+Tested:
+- Adding concert
+- Editing concert details
+- Duplicate concert error
 ## Complete console output
 
 ```

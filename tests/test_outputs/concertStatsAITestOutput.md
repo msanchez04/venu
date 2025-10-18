@@ -1,3 +1,8 @@
+Focused on testing the output of the AI Summary and artist recommendations (Each step a different test case)
+Tested: 
+- using concert history to test ai summary was correct
+- verified artists were not hallucinations
+- no prior concerts logged error
 ## Complete Console Output
 
 ```

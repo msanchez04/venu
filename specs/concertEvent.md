@@ -1,0 +1,25 @@
+# ConcertEvent Concept Specification
+
+**concept** ConcertEvent [User, Artist]
+
+**purpose** represent a single concert that a user attended, serving as the hub for related data
+
+**principle** after a user attends a concert, they can create a record with the artist, date, venue, and city, and later edit these details if needed
+
+**state**
+a set of ConcertEvents with
+owner User
+artist Artist
+date DateTime
+venue String
+city String
+rating Number (optional)
+
+**actions**
+addConcert (user: User, artist: Artist, date: DateTime, venue: String, city: String): (concert: ConcertEvent)
+**requires** no ConcertEvent exists for (user, artist, date, venue)
+**effects** creates and saves a new ConcertEvent linked to the user
+
+editConcertDetails (concert: ConcertEvent, newArtist: Artist?, newDate: DateTime?, newVenue: String?, newCity: String?): Empty
+**requires** concert exists
+**effects** updates any specified concert details

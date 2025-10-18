@@ -1,3 +1,9 @@
+Focused on testing essentially end-to-end using the 6-step breakdown
+Tested:
+- User registration
+- User login
+- User uploading to the media album
+- AI Summary and artist recommendations using MusicBrainz API
 ## Complete Console Output
 
 ```
