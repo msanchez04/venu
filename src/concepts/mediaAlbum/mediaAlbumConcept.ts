@@ -1,6 +1,6 @@
 import { Collection, Db } from "mongodb";
-import { Empty, ID } from "@utils/types.ts";
-import { freshID } from "@utils/database.ts";
+import { Empty, ID } from "../../utils/types.ts";
+import { freshID } from "../../utils/database.ts";
 
 // Declare collection prefix, use concept name
 const PREFIX = "MediaAlbum" + ".";
@@ -44,7 +44,7 @@ export default class MediaAlbumConcept {
 
   constructor(private readonly db: Db) {
     this.mediaAlbums = this.db.collection<MediaAlbumDoc>(
-      PREFIX + "mediaAlbums"
+      PREFIX + "mediaAlbums",
     );
   }
 
@@ -132,7 +132,7 @@ export default class MediaAlbumConcept {
     try {
       await this.mediaAlbums.updateOne(
         { _id: album },
-        { $push: { mediaItems: newMediaFile } }
+        { $push: { mediaItems: newMediaFile } },
       );
       return {}; // Success, no specific result to return
     } catch (e) {

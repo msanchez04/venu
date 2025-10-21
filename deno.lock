@@ -1,7 +1,11 @@
 {
   "version": "5",
   "specifiers": {
+<<<<<<< HEAD
     "jsr:@hono/hono@*": "4.9.10",
+=======
+    "jsr:@hono/hono@*": "4.10.1",
+>>>>>>> 2bfa464 (Updated API Spec)
     "jsr:@std/assert@*": "1.0.7",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/cli@*": "1.0.22",
@@ -28,8 +32,19 @@
     "npm:sanitize-filename-ts@*": "1.0.2"
   },
   "jsr": {
+<<<<<<< HEAD
     "@hono/hono@4.9.10": {
       "integrity": "b416cf3bf42e33353e37ea13df409b08bd9a67fabc5fca630f76924fbadb01e5"
+=======
+    "@hono/hono@4.10.1": {
+      "integrity": "cea3f17677afcd84a654cd1633c136e6bb2220bfa512fdac56614bb97c39fdbf"
+    },
+    "@std/assert@0.223.0": {
+      "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24",
+      "dependencies": [
+        "jsr:@std/fmt"
+      ]
+>>>>>>> 2bfa464 (Updated API Spec)
     },
     "@std/assert@1.0.7": {
       "integrity": "64ce9fac879e0b9f3042a89b3c3f8ccfc9c984391af19e2087513a79d73e28c3",

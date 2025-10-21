@@ -1,6 +1,6 @@
 import { Collection, Db } from "mongodb";
-import { ID, Empty } from "../utils/types.ts"; // Assuming types are in a utils folder
-import { freshID } from "../utils/database.ts"; // Assuming freshID is in a utils folder
+import { Empty, ID } from "../../utils/types.ts";
+import { freshID } from "../../utils/database.ts";
 
 // =================================================================================================
 // CONCEPT: ConcertEvent
@@ -131,7 +131,7 @@ export default class ConcertEventConcept {
 
     const result = await this.concertEvents.updateOne(
       { _id: concert },
-      { $set: updates }
+      { $set: updates },
     );
 
     if (result.matchedCount === 0) {

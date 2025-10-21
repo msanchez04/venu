@@ -1,6 +1,6 @@
 import { Collection, Db } from "mongodb";
-import { Empty, ID } from "@utils/types.ts";
-import { freshID } from "@utils/database.ts";
+import { Empty, ID } from "../../utils/types.ts";
+import { freshID } from "../../utils/database.ts";
 
 // Declare collection prefix, use concept name
 const PREFIX = "ConcertStatsAI" + ".";
@@ -66,7 +66,7 @@ class MusicBrainzClient {
   }
 
   async searchArtistByName(
-    name: string
+    name: string,
   ): Promise<{ id: string; name: string } | undefined> {
     const url = new URL("https://musicbrainz.org/ws/2/artist");
     url.searchParams.set("fmt", "json");
@@ -123,11 +123,11 @@ export default class ConcertStatsAIConcept {
     options?: {
       fetchFn?: typeof fetch;
       musicBrainz?: { userAgent: string; contact?: string };
-    }
+    },
   ) {
     this.stats = this.db.collection<StatsDoc>(PREFIX + "stats");
-    const userAgent =
-      options?.musicBrainz?.userAgent ?? "Venu/1.0 (ConcertStatsAI)";
+    const userAgent = options?.musicBrainz?.userAgent ??
+      "Venu/1.0 (ConcertStatsAI)";
     const contact = options?.musicBrainz?.contact;
     this.mbClient = new MusicBrainzClient({
       fetchFn: options?.fetchFn,
@@ -198,7 +198,7 @@ export default class ConcertStatsAIConcept {
     try {
       await this.stats.updateOne(
         { _id: user },
-        { $push: { concertHistory: entry }, $set: { updatedAt: new Date() } }
+        { $push: { concertHistory: entry }, $set: { updatedAt: new Date() } },
       );
       return {};
     } catch (e) {
@@ -233,7 +233,7 @@ export default class ConcertStatsAIConcept {
       byArtist.set(h.artist, (byArtist.get(h.artist) ?? 0) + 1);
     }
     const favoriteArtist = Array.from(byArtist.entries()).sort(
-      (a, b) => b[1] - a[1]
+      (a, b) => b[1] - a[1],
     )[0]?.[0];
     const summary = favoriteArtist
       ? `You have attended ${totalConcerts} concerts. Your most-seen artist so far is ${favoriteArtist}.`
@@ -241,7 +241,7 @@ export default class ConcertStatsAIConcept {
 
     // Generate recommendations via MusicBrainz based on top tags across user's artists
     const knownArtists = new Set<string>(
-      Array.from(byArtist.keys()).map((n) => n.toLowerCase())
+      Array.from(byArtist.keys()).map((n) => n.toLowerCase()),
     );
     const tagCounts = new Map<string, number>();
 
@@ -257,7 +257,7 @@ export default class ConcertStatsAIConcept {
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
         console.warn(
-          `MusicBrainz tag lookup failed for '${artistName}': ${message}`
+          `MusicBrainz tag lookup failed for '${artistName}': ${message}`,
         );
       }
     }
@@ -287,7 +287,7 @@ export default class ConcertStatsAIConcept {
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
         console.warn(
-          `MusicBrainz recommendation search failed for tag '${tag}': ${message}`
+          `MusicBrainz recommendation search failed for tag '${tag}': ${message}`,
         );
       }
     }
@@ -301,7 +301,7 @@ export default class ConcertStatsAIConcept {
             recommendations: recommendedNames.slice(0, 3),
             updatedAt: new Date(),
           },
-        }
+        },
       );
       return {};
     } catch (e) {

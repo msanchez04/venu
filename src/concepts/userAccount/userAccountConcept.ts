@@ -1,6 +1,6 @@
 import { Collection, Db, MongoServerError } from "mongodb";
-import { ID } from "../utils/types.ts";
-import { freshID } from "../utils/database.ts";
+import { ID } from "../../utils/types.ts";
+import { freshID } from "../../utils/database.ts";
 
 // Define the prefix for MongoDB collections to avoid naming conflicts
 const PREFIX = "UserAccount.";
