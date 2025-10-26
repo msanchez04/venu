@@ -109,7 +109,9 @@ export default class UserAccountConcept {
     email: string;
     password: string;
   }): Promise<
-    { success: true; user: User } | { success: false } | { error: string }
+    { success: true; user: User; userName: string } | { success: false } | {
+      error: string;
+    }
   > {
     const user = await this.users.findOne({ email });
 
@@ -118,6 +120,6 @@ export default class UserAccountConcept {
       return { success: false };
     }
 
-    return { success: true, user: user._id };
+    return { success: true, user: user._id, userName: user.name };
   }
 }
