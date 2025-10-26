@@ -93,6 +93,21 @@ Base path: `/api/concertEvent`
   - Success: `{}`
   - Error: `{"error": "error_message"}`
 
+#### Delete Concert
+
+- **Endpoint**: `POST /api/concertEvent/deleteConcert`
+- **Description**: Delete a concert event (only if owned by the user)
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id",
+    "concert": "concert_id"
+  }
+  ```
+- **Response**:
+  - Success: `{}`
+  - Error: `{"error": "error_message"}`
+
 #### Get Concerts by User (Query)
 
 - **Endpoint**: `POST /api/concertEvent/_getConcertsByUser`
@@ -210,6 +225,23 @@ Base path: `/api/concertStatsAI`
 
 - **Endpoint**: `POST /api/concertStatsAI/logConcert`
 - **Description**: Add a concert to user's history
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id",
+    "artist": "string",
+    "venue": "string",
+    "date": "ISO_date_string"
+  }
+  ```
+- **Response**:
+  - Success: `{}`
+  - Error: `{"error": "error_message"}`
+
+#### Remove Concert From History
+
+- **Endpoint**: `POST /api/concertStatsAI/removeConcertFromHistory`
+- **Description**: Remove a concert from user's history
 - **Request Body**:
   ```json
   {

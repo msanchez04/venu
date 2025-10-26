@@ -209,6 +209,65 @@ export default class ConcertStatsAIConcept {
   }
 
   /**
+   * removeConcertFromHistory (user: User, artist: String, venue: String, date: DateTime)
+   * requires: user stats record exists
+   * effect: removes concert from user's concertHistory
+   */
+  async removeConcertFromHistory({
+    user,
+    artist,
+    venue,
+    date: _date,
+  }: {
+    user: User;
+    artist: string;
+    venue: string;
+    date: Date;
+  }): Promise<Empty | { error: string }> {
+    const existing = await this.stats.findOne({ _id: user });
+    if (!existing) {
+      return { error: "Stats record not found for user." };
+    }
+
+    try {
+      console.log(`Attempting to remove concert: ${artist} at ${venue}`);
+      console.log(`Current history length: ${existing.concertHistory.length}`);
+
+      // Remove the first matching concert from history by artist and venue
+      // (Date matching can be problematic due to serialization issues)
+      const updatedHistory = existing.concertHistory.filter(
+        (entry) => entry.artist !== artist || entry.venue !== venue,
+      );
+
+      console.log(`Updated history length: ${updatedHistory.length}`);
+
+      if (updatedHistory.length === existing.concertHistory.length) {
+        console.warn(
+          `No matching concert found to remove for ${artist} at ${venue}`,
+        );
+        // Still return success to avoid errors if the entry wasn't found
+        return {};
+      }
+
+      await this.stats.updateOne(
+        { _id: user },
+        {
+          $set: {
+            concertHistory: updatedHistory,
+            updatedAt: new Date(),
+          },
+        },
+      );
+      console.log(`Successfully removed concert from history`);
+      return {};
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`Failed to remove concert: ${message}`);
+      return { error: "Failed to remove concert due to a database error." };
+    }
+  }
+
+  /**
    * generateSummaryAI (user: User)
    * requires: user has at least one logged concert
    * effect: produces a human-readable summary and 2–3 artist recommendations using MusicBrainz
@@ -222,6 +281,14 @@ export default class ConcertStatsAIConcept {
     if (!record) {
       return { error: "Stats record not found for user." };
     }
+    console.log(
+      `Generating summary for user ${user}. Concert history length: ${record.concertHistory.length}`,
+    );
+    console.log(
+      `Concert history:`,
+      record.concertHistory.map((h) => `${h.artist} at ${h.venue}`),
+    );
+
     if (record.concertHistory.length === 0) {
       return { error: "User has no concert history." };
     }
@@ -232,12 +299,23 @@ export default class ConcertStatsAIConcept {
     for (const h of record.concertHistory) {
       byArtist.set(h.artist, (byArtist.get(h.artist) ?? 0) + 1);
     }
-    const favoriteArtist = Array.from(byArtist.entries()).sort(
+    const sortedArtists = Array.from(byArtist.entries()).sort(
       (a, b) => b[1] - a[1],
-    )[0]?.[0];
+    );
+    const topCount = sortedArtists[0]?.[1] ?? 0;
+    const secondCount = sortedArtists[1]?.[1] ?? 0;
+
+    // Only mention "most-seen artist" if there's a clear winner (not a tie)
+    const favoriteArtist = topCount > secondCount
+      ? sortedArtists[0]?.[0]
+      : undefined;
     const summary = favoriteArtist
-      ? `You have attended ${totalConcerts} concerts. Your most-seen artist so far is ${favoriteArtist}.`
-      : `You have attended ${totalConcerts} concerts.`;
+      ? `You have attended ${totalConcerts} concert${
+        totalConcerts !== 1 ? "s" : ""
+      }. Your most-seen artist so far is ${favoriteArtist}.`
+      : `You have attended ${totalConcerts} concert${
+        totalConcerts !== 1 ? "s" : ""
+      }.`;
 
     // Get known artists for filtering
     const knownArtists = new Set<string>(

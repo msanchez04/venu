@@ -143,12 +143,49 @@ export default class ConcertEventConcept {
   }
 
   /**
+   * Deletes a concert event.
+   * @param user The ID of the user (for ownership verification).
+   * @param concert The ID of the concert to delete.
+   * @returns An empty object on success or an error object.
+   */
+  async deleteConcert({
+    user,
+    concert,
+  }: {
+    user: User;
+    concert: ID;
+  }): Promise<Empty | { error: string }> {
+    // REQUIRES: concert exists and is owned by the user
+    const doesExist = await this.concertEvents.findOne({ _id: concert });
+    if (!doesExist) {
+      return { error: `Concert with ID '${concert}' not found.` };
+    }
+
+    // Verify ownership
+    if (doesExist.owner !== user) {
+      return { error: "User is not the owner of this concert." };
+    }
+
+    // Delete the concert
+    const result = await this.concertEvents.deleteOne({ _id: concert });
+
+    if (result.deletedCount === 0) {
+      return { error: "Failed to delete the concert." };
+    }
+
+    return {};
+  }
+
+  /**
    * Returns all concerts for a specific user.
    * @param user The ID of the user.
    * @returns An array of concerts owned by the user.
    */
-  async _getConcertsByUser({ user }: { user: User }): Promise<{ concerts: ConcertEventDoc[] }> {
-    const foundConcerts = await this.concertEvents.find({ owner: user }).toArray();
+  async _getConcertsByUser(
+    { user }: { user: User },
+  ): Promise<{ concerts: ConcertEventDoc[] }> {
+    const foundConcerts = await this.concertEvents.find({ owner: user })
+      .toArray();
     return { concerts: foundConcerts };
   }
 }
