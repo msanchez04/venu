@@ -122,4 +122,79 @@ export default class UserAccountConcept {
 
     return { success: true, user: user._id, userName: user.name };
   }
+
+  /**
+   * Updates a user's display name.
+   * @param user The user's ID.
+   * @param newName The new display name.
+   * @returns Success or error.
+   *
+   * @requires user exists
+   * @effect updates user's name
+   */
+  async updateName({
+    user,
+    newName,
+  }: {
+    user: User;
+    newName: string;
+  }): Promise<Empty | { error: string }> {
+    const existing = await this.users.findOne({ _id: user });
+    if (!existing) {
+      return { error: "User not found." };
+    }
+
+    try {
+      await this.users.updateOne(
+        { _id: user },
+        { $set: { name: newName } },
+      );
+      return {};
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`Failed to update name: ${message}`);
+      return { error: "Failed to update name." };
+    }
+  }
+
+  /**
+   * Updates a user's password (after verifying current password).
+   * @param user The user's ID.
+   * @param currentPassword The user's current password.
+   * @param newPassword The new password.
+   * @returns Success or error.
+   *
+   * @requires user exists and current password is correct
+   * @effect updates user's password
+   */
+  async updatePassword({
+    user,
+    currentPassword,
+    newPassword,
+  }: {
+    user: User;
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<Empty | { error: string }> {
+    const existing = await this.users.findOne({ _id: user });
+    if (!existing) {
+      return { error: "User not found." };
+    }
+
+    if (existing.password !== currentPassword) {
+      return { error: "Current password is incorrect." };
+    }
+
+    try {
+      await this.users.updateOne(
+        { _id: user },
+        { $set: { password: newPassword } },
+      );
+      return {};
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`Failed to update password: ${message}`);
+      return { error: "Failed to update password." };
+    }
+  }
 }

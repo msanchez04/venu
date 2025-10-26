@@ -49,8 +49,39 @@ Base path: `/api/userAccount`
   }
   ```
 - **Response**:
-  - Success: `{"success": true, "user": "user_id"}`
+  - Success: `{"success": true, "user": "user_id", "userName": "string"}`
   - Failure: `{"success": false}`
+  - Error: `{"error": "error_message"}`
+
+#### Update Name
+
+- **Endpoint**: `POST /api/userAccount/updateName`
+- **Description**: Update user's display name
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id",
+    "newName": "string"
+  }
+  ```
+- **Response**:
+  - Success: `{}`
+  - Error: `{"error": "error_message"}`
+
+#### Update Password
+
+- **Endpoint**: `POST /api/userAccount/updatePassword`
+- **Description**: Update user's password
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id",
+    "currentPassword": "string",
+    "newPassword": "string"
+  }
+  ```
+- **Response**:
+  - Success: `{}`
   - Error: `{"error": "error_message"}`
 
 ### ConcertEvent Concept
