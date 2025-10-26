@@ -144,6 +144,22 @@ Base path: `/api/mediaAlbum`
   - Success: `{}`
   - Error: `{"error": "error_message"}`
 
+#### Delete Media
+
+- **Endpoint**: `POST /api/mediaAlbum/deleteMedia`
+- **Description**: Remove a media item from an album
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id",
+    "album": "album_id",
+    "mediaId": "media_id"
+  }
+  ```
+- **Response**:
+  - Success: `{}`
+  - Error: `{"error": "error_message"}`
+
 #### Get Media Album (Query)
 
 - **Endpoint**: `POST /api/mediaAlbum/_getMediaAlbum`

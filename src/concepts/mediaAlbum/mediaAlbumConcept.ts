@@ -178,4 +178,51 @@ export default class MediaAlbumConcept {
       .toArray();
     return { albums: foundAlbums };
   }
+
+  /**
+   * deleteMedia (user: User, album: MediaAlbum, mediaId: ID): Empty | (error: String)
+   *
+   * requires: album exists, album.owner = user, media item with given ID exists in album
+   * effect: removes the media item with the given ID from the album
+   */
+  async deleteMedia({
+    user,
+    album,
+    mediaId,
+  }: {
+    user: User;
+    album: ID;
+    mediaId: ID;
+  }): Promise<Empty | { error: string }> {
+    // Check precondition: album exists
+    const existingAlbum = await this.mediaAlbums.findOne({ _id: album });
+    if (!existingAlbum) {
+      return { error: "Media album not found." };
+    }
+
+    // Check precondition: album.owner = user
+    if (existingAlbum.owner !== user) {
+      return { error: "User is not the owner of this album." };
+    }
+
+    // Check precondition: media item exists
+    const mediaItem = existingAlbum.mediaItems.find((item) =>
+      item.id === mediaId
+    );
+    if (!mediaItem) {
+      return { error: "Media item not found in album." };
+    }
+
+    try {
+      await this.mediaAlbums.updateOne(
+        { _id: album },
+        { $pull: { mediaItems: { id: mediaId } } },
+      );
+      return {}; // Success
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`Failed to delete media: ${message}`);
+      return { error: "Failed to delete media due to a database error." };
+    }
+  }
 }
