@@ -93,6 +93,20 @@ Base path: `/api/concertEvent`
   - Success: `{}`
   - Error: `{"error": "error_message"}`
 
+#### Get Concerts by User (Query)
+
+- **Endpoint**: `POST /api/concertEvent/_getConcertsByUser`
+- **Description**: Retrieve all concerts for a user
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id"
+  }
+  ```
+- **Response**:
+  - Success: `{"concerts": [{"_id": "concert_id", "owner": "user_id", "artist": "artist_id", "date": "ISO_date", "venue": "string", "city": "string"}]}`
+  - Error: `{"error": "error_message"}`
+
 ### MediaAlbum Concept
 
 Base path: `/api/mediaAlbum`
@@ -205,6 +219,20 @@ Base path: `/api/concertStatsAI`
   ```
 - **Response**:
   - Success: `{}`
+  - Error: `{"error": "error_message"}`
+
+#### Get Stats Record (Query)
+
+- **Endpoint**: `POST /api/concertStatsAI/_getStatsRecord`
+- **Description**: Retrieve a user's stats record with summary and recommendations
+- **Request Body**:
+  ```json
+  {
+    "user": "user_id"
+  }
+  ```
+- **Response**:
+  - Success: `{"record": {"_id": "user_id", "concertHistory": [...], "summary": "string", "recommendations": ["string", ...], "createdAt": "ISO_date", "updatedAt": "ISO_date"}}`
   - Error: `{"error": "error_message"}`
 
 ## API Design Principles

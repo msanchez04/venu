@@ -239,57 +239,122 @@ export default class ConcertStatsAIConcept {
       ? `You have attended ${totalConcerts} concerts. Your most-seen artist so far is ${favoriteArtist}.`
       : `You have attended ${totalConcerts} concerts.`;
 
-    // Generate recommendations via MusicBrainz based on top tags across user's artists
+    // Get known artists for filtering
     const knownArtists = new Set<string>(
       Array.from(byArtist.keys()).map((n) => n.toLowerCase()),
     );
-    const tagCounts = new Map<string, number>();
 
-    // For each unique artist, attempt to resolve tags via MB
-    for (const artistName of byArtist.keys()) {
+    // Use Gemini AI to generate initial recommendations
+    const recommendedNames: string[] = [];
+
+    const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
+    if (!geminiApiKey) {
+      console.error("GEMINI_API_KEY not found in environment");
+      return { error: "Gemini API key not configured" };
+    }
+
+    // Use 2.5-flash with high token limit to accommodate thoughts + text
+    const geminiModel = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
+
+    const geminiPrompt = `Based on this concert history:
+${
+      Array.from(byArtist.entries())
+        .map(([artist, count]) =>
+          `- ${artist} (${count} ${count === 1 ? "concert" : "concerts"})`
+        )
+        .join("\n")
+    }
+
+Please recommend 5-7 real, popular music artists that someone with this concert history might enjoy. Return ONLY a comma-separated list of artist names, no other text.`;
+
+    console.log("Calling Gemini API for recommendations...");
+    let geminiText: string | undefined;
+
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: geminiPrompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 3000,
+            },
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Gemini API error (${response.status}):`, errorText);
+        return { error: "Failed to generate recommendations from Gemini API" };
+      }
+
+      const data = await response.json();
+      console.log("Full Gemini response:", JSON.stringify(data, null, 2));
+
+      // Try to extract text - it might be in different places depending on API version
+      geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      // If no parts, try other possible locations
+      if (!geminiText) {
+        const candidate = data.candidates?.[0];
+        if (candidate?.text) {
+          geminiText = candidate.text;
+        } else if (candidate?.content?.text) {
+          geminiText = candidate.content.text;
+        }
+      }
+
+      console.log("Extracted Gemini text:", geminiText);
+
+      if (!geminiText) {
+        console.error("No text in Gemini response. Response structure:", data);
+        return {
+          error:
+            "No recommendations generated. Try increasing token limit or check API response.",
+        };
+      }
+    } catch (e) {
+      console.error("Gemini API call failed:", e);
+      return { error: "Failed to call Gemini API" };
+    }
+
+    // Parse Gemini response
+    const suggestedArtists = geminiText!
+      .split(",")
+      .map((a: string) => a.trim())
+      .filter((a: string) => a.length > 0);
+
+    console.log("Parsed suggested artists:", suggestedArtists);
+
+    // Validate suggestions with MusicBrainz
+    for (const artistName of suggestedArtists) {
+      if (recommendedNames.length >= 3) break;
+
       try {
-        const found = await this.mbClient.searchArtistByName(artistName);
-        if (!found) continue;
-        const tags = await this.mbClient.getArtistTags(found.id);
-        for (const tag of tags) {
-          tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+        const mbArtist = await this.mbClient.searchArtistByName(artistName);
+        console.log(
+          `Validating "${artistName}":`,
+          mbArtist?.name || "not found",
+        );
+
+        if (mbArtist && !knownArtists.has(mbArtist.name.toLowerCase())) {
+          recommendedNames.push(mbArtist.name);
+          console.log(`Added recommendation: ${mbArtist.name}`);
         }
       } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        console.warn(
-          `MusicBrainz tag lookup failed for '${artistName}': ${message}`,
-        );
+        console.debug(`Could not validate artist: ${artistName}`, e);
       }
     }
 
-    // Choose top tags
-    const topTags = Array.from(tagCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([tag]) => tag);
-
-    // Search recommendations for each tag
-    const recommendedNames: string[] = [];
-    for (const tag of topTags) {
-      try {
-        const names = await this.mbClient.searchArtistsByTag(tag, 15);
-        for (const name of names) {
-          const key = name.toLowerCase();
-          if (
-            !knownArtists.has(key) &&
-            !recommendedNames.some((n) => n.toLowerCase() === key)
-          ) {
-            recommendedNames.push(name);
-            if (recommendedNames.length >= 3) break;
-          }
-        }
-        if (recommendedNames.length >= 3) break;
-      } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        console.warn(
-          `MusicBrainz recommendation search failed for tag '${tag}': ${message}`,
-        );
-      }
+    if (recommendedNames.length === 0) {
+      console.error("No artists could be validated by MusicBrainz");
+      return {
+        error: "Could not validate any recommendations with MusicBrainz",
+      };
     }
 
     try {
@@ -309,5 +374,22 @@ export default class ConcertStatsAIConcept {
       console.error(`Failed to update stats summary: ${message}`);
       return { error: "Failed to generate summary due to a database error." };
     }
+  }
+
+  /**
+   * Query method to get a user's stats record
+   * @param user The user ID
+   * @returns The stats record or an error
+   */
+  async _getStatsRecord({
+    user,
+  }: {
+    user: User;
+  }): Promise<{ record: StatsDoc } | { error: string }> {
+    const record = await this.stats.findOne({ _id: user });
+    if (!record) {
+      return { error: "Stats record not found for user." };
+    }
+    return { record };
   }
 }

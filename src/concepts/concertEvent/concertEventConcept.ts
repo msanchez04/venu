@@ -141,4 +141,14 @@ export default class ConcertEventConcept {
 
     return {};
   }
+
+  /**
+   * Returns all concerts for a specific user.
+   * @param user The ID of the user.
+   * @returns An array of concerts owned by the user.
+   */
+  async _getConcertsByUser({ user }: { user: User }): Promise<{ concerts: ConcertEventDoc[] }> {
+    const foundConcerts = await this.concertEvents.find({ owner: user }).toArray();
+    return { concerts: foundConcerts };
+  }
 }
