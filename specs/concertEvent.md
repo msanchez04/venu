@@ -23,3 +23,11 @@ addConcert (user: User, artist: Artist, date: DateTime, venue: String, city: Str
 editConcertDetails (concert: ConcertEvent, newArtist: Artist?, newDate: DateTime?, newVenue: String?, newCity: String?): Empty
 **requires** concert exists
 **effects** updates any specified concert details
+
+deleteConcert (user: User, concert: ConcertEvent): Empty
+**requires** concert exists and concert.owner = user
+**effects** removes the ConcertEvent and any associated media albums
+
+getConcertsByUser (user: User): (concerts: List of ConcertEvent)
+**requires** user exists
+**effects** returns all ConcertEvents owned by the user

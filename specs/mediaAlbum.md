@@ -21,4 +21,8 @@ createAlbum (user: User, concert: ConcertEvent): (album: MediaAlbum)
 
 uploadMedia (user: User, album: MediaAlbum, url: String, uploadTimestamp: DateTime, type: String): Empty
 **requires** album exists and album.owner = user
-**effects** adds a new MediaFileEntry to the specified album's mediaItems set
+**effects** adds a new MediaFileEntry to the specified album's mediaItems set. The url parameter accepts data URLs from file uploads. The type is auto-detected from the file (photo or video).
+
+deleteMedia (user: User, album: MediaAlbum, mediaId: ID): Empty
+**requires** album exists, album.owner = user, and mediaId exists in album.mediaItems
+**effects** removes the specified media item from the album's mediaItems set

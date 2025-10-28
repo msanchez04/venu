@@ -19,6 +19,14 @@ register (name: String, email: String, password: String): (user: User)
 **requires** no existing user with the same email
 **effects** creates and stores a new UserAccount with current time as createdAt
 
-login (email: String, password: String): (success: Boolean, user: User?)
+login (email: String, password: String): (success: Boolean, user: User?, userName: String?)
 **requires** user with matching email exists
-**effects** returns true and user ID if password matches; false otherwise
+**effects** returns true, user ID, and userName if password matches; false otherwise
+
+updateName (user: User, newName: String): Empty
+**requires** user exists
+**effects** updates the user's name to newName
+
+updatePassword (user: User, currentPassword: String, newPassword: String): Empty
+**requires** user exists and currentPassword matches user's password
+**effects** updates the user's password to newPassword

@@ -26,4 +26,12 @@ logConcert (user: User, artist: String, venue: String, date: DateTime): Empty
 
 generateSummaryAI (user: User): Empty
 **requires** user has at least one logged concert
-**effects** produces a human-readable summary and 2–3 artist recommendations using MusicBrainz to prevent hallucinations
+**effects** produces a human-readable summary and 2–3 artist recommendations using Gemini API for generation and MusicBrainz API for validation to prevent hallucinations. Handles ties in most-seen artist by only reporting if there's a clear winner.
+
+removeConcertFromHistory (user: User, artist: String, venue: String, date: DateTime): Empty
+**requires** user stats record exists
+**effects** removes the first matching concert entry from user's concertHistory based on artist and venue
+
+getStatsRecord (user: User): (stats: StatsRecord)
+**requires** user exists
+**effects** returns the complete StatsRecord for the user including summary and recommendations

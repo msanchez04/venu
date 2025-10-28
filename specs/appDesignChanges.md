@@ -2,6 +2,46 @@
 
 The overall design of the app has changed since assignment 2. There was concern for too many concepts, which turned out to be more than feasible. Instead, I focused the new design on just incorporating basic functionality such as user authentication, concert event creation, and the corresponding media album for image/video upload, and finally, the LLM feature, AI summary with artist recommendations based on a user's past concert history. I chose to narrow down my ideas for my app since I would need to take additional time to incorporate the MusicBrainz API to ensure the artist recommendations being produced are real and not hallucinations.
 
+## UI/UX Enhancements
+
+### 1) Color Scheme
+Purple color palette:
+- Primary dark: `#424874`
+- Primary accent: `#a6b1e1`
+- Light accent: `#dcd6f7`
+- Very light background: `#f4eeff`
+
+### 2) Session Persistence
+Implemented localStorage-based session management to maintain user login state across page refreshes. This eliminates the frustration of being logged out when refreshing the page, following the assignment's suggestion for state storage.
+
+### 3) File Upload System
+Replaced URL-based media uploads with a native file upload system that:
+- Supports direct file selection from the user's device
+- Auto-detects media type (photo/video) from file MIME types
+- Validates file sizes to prevent MongoDB document size limit issues
+- Converts files to data URLs for storage
+
+### 4) Media Gallery View
+Enhanced media album display with:
+- Album cover view showing up to 4 thumbnails per concert
+- Full-screen gallery modal for viewing all media items
+- Navigation between images/videos within the gallery
+- Inline delete functionality from the gallery view
+
+### 5) Concert Management
+- Added delete functionality for entire concert events
+- Integrated concert deletion with AI stats history removal
+- Improved concert display with inline album preview
+
+### 6) Account Settings
+Implemented a settings modal with:
+- Display name update capability
+- Password change functionality
+- Clean, accessible UI integrated into the dashboard header
+
+### 7) Typography
+Updated global font family to Helvetica for a clean, professional appearance.
+
 ## Interesting Moments
 
 ### 1) TypeScript Error Handling Discovery
