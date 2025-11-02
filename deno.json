@@ -2,10 +2,12 @@
   "imports": {
     "@concepts/": "./src/concepts/",
     "@concepts": "./src/concepts/concepts.ts",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@test-concepts": "./src/concepts/test_concepts.ts",
     "@utils/": "./src/utils/",
     "@engine": "./src/engine/mod.ts",
-    "@syncs": "./src/syncs/syncs.ts"
+    "@syncs": "./src/syncs/syncs.ts",
+    "mongodb": "npm:mongodb@^6.20.0"
   },
   "tasks": {
     "start": "deno run --allow-net --allow-write --allow-read --allow-sys --allow-env src/main.ts",

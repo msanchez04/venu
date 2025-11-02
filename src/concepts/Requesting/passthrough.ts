@@ -25,12 +25,47 @@
  */
 
 export const inclusions: Record<string, string> = {
-  // Feel free to delete these example inclusions
-  "/api/LikertSurvey/_getSurveyQuestions": "this is a public query",
-  "/api/LikertSurvey/_getSurveyResponses": "responses are public",
-  "/api/LikertSurvey/_getRespondentAnswers": "answers are visible",
-  "/api/LikertSurvey/submitResponse": "allow anyone to submit response",
-  "/api/LikertSurvey/updateResponse": "allow anyone to update their response",
+  // UserAccount - public authentication endpoints
+  "/api/UserAccount/register": "public registration endpoint",
+  "/api/UserAccount/login": "public login endpoint",
+  "/api/UserAccount/updateName":
+    "user updates own name, authenticated via userId in request",
+  "/api/UserAccount/updatePassword":
+    "user updates own password, authenticated via userId in request",
+
+  // ConcertEvent - user-scoped actions authenticated via userId in request body
+  "/api/ConcertEvent/addConcert":
+    "user creates own concert, authenticated via userId in request",
+  "/api/ConcertEvent/editConcertDetails":
+    "user edits own concert, authenticated via userId ownership check",
+  "/api/ConcertEvent/_getConcertsByUser":
+    "user queries own concerts, authenticated via userId in request",
+  "/api/ConcertEvent/deleteConcert":
+    "user deletes own concert, authenticated via userId ownership check",
+
+  // MediaAlbum - user-scoped actions authenticated via userId in request body
+  "/api/MediaAlbum/createAlbum":
+    "user creates own album, authenticated via userId in request",
+  "/api/MediaAlbum/uploadMedia":
+    "user uploads to own album, authenticated via userId ownership check",
+  "/api/MediaAlbum/_getMediaAlbum":
+    "user queries own album, authenticated via userId in request",
+  "/api/MediaAlbum/_getAlbumsByUserAndConcert":
+    "user queries own albums, authenticated via userId in request",
+  "/api/MediaAlbum/deleteMedia":
+    "user deletes own media, authenticated via userId ownership check",
+
+  // ConcertStatsAI - user-scoped actions authenticated via userId in request body
+  "/api/ConcertStatsAI/initializeUser":
+    "user initializes own stats, authenticated via userId in request",
+  "/api/ConcertStatsAI/logConcert":
+    "user logs own concert, authenticated via userId in request",
+  "/api/ConcertStatsAI/removeConcertFromHistory":
+    "user removes own concert from history, authenticated via userId in request",
+  "/api/ConcertStatsAI/generateSummaryAI":
+    "user generates own summary, authenticated via userId in request",
+  "/api/ConcertStatsAI/_getStatsRecord":
+    "user queries own stats, authenticated via userId in request",
 };
 
 /**
@@ -44,7 +79,5 @@ export const inclusions: Record<string, string> = {
  */
 
 export const exclusions: Array<string> = [
-  // Feel free to delete these example exclusions
-  "/api/LikertSurvey/createSurvey",
-  "/api/LikertSurvey/addQuestion",
+  // No exclusions needed - all actions are authenticated via userId in request body
 ];

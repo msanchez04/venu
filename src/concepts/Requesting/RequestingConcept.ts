@@ -199,6 +199,15 @@ export function startRequestingServer(
     }),
   );
 
+  // Root route handler
+  app.get("/", (c) => {
+    return c.json({
+      message: "Venu API Server",
+      status: "running",
+      baseUrl: REQUESTING_BASE_URL,
+    });
+  });
+
   /**
    * PASSTHROUGH ROUTES
    *
