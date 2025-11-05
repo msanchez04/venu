@@ -1,3 +1,14 @@
+# Final Deliverables
+
+[Trace Logs](/src/consolelog.md)
+
+[Design Document](/src/designdocument.md)
+
+[Reflection Document](/src/reflection.md)
+
+[Demo Video](https://drive.google.com/file/d/1pBnw0XwaltQUk-eBjky72l_3A95W4h6H/view?usp=sharing)
+
+
 # 6.104 Assignment 4: Implementing Concepts
 
 In this assignment, you'll begin creating your backend by implementing your concepts in TypeScript. You'll learn to use Context, a simple CLI tool and a new way to both collaborate with LLMs and drive your implementation through design.

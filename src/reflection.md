@@ -1,0 +1,13 @@
+# Final Reflection
+
+## Overall Experience
+I really enjoyed working on this project individually. I had been looking forward to this class for many years because I wanted to have the opportunity to work on my own fullstack project for the first time. In past internships and classes, I have worked on individual front-end/back-end components, but rarely ever work on a full-stack project. This experience has allowed me to grow as a developer as I am able to navigate both ends of my full app. 
+
+## Agentic Coding
+When I read about the restructuring of the class to include AI tools in our designs and implementations, I was more eager to take the class. During the past four years, there have been major shifts in the way developers have recently been developing code. During my freshman year using AI tools such as ChatGPT was relatively new and prohibited. Now that the development environment and protocols have changed, I think it is very valuable that we are able to learn how to incoporate these tools in our day to day lives since that is where development is headed. With this in mind, there are many different ways I have been able to use AI tools for this project. 
+
+For this project, tools such as Context and Cursor were very resourceful. Context was helpful when it came to the outline/structure of my project's concept designs. I would use it to refine some of the actions as well as use it to get feedback for any imporvements since it was able to use other document references to understand the assignment's objective. For actual development, I used Cursor to help me debug a lot of my issues. I enjoyed the way I was able to reference files, terminal outputs, as well as specific lines of code.
+
+## Skills
+
+After this project, I would say I have been able to refine a lot of my developer skills. Being able to navigate the connection between the front and back ends of my app was a very valuable skill that I didn't have much experience with until now. Using AI tools for development and knowing how to refine the output it provides rather than going in circles is a valuable skill this project has allowed me to work on. Working with MongoDB was also new for me, but with examples and using AI it became clearer to work with. This was also the first time I had to work with the design of my project from scratch and also with the idea of concepts. The skill of developing concepts will be really valuable for my future projects where I can break the ideas down into more manageable parts.
